@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:dio/dio.dart';
 
 void main() {
   runApp(const LoginPage());
@@ -103,7 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                             // the form is invalid.
                             if (_formKey.currentState!.validate()) {
                               print("Submission");
-                              fetchLogin(username, password);
+                              DioClient z = DioClient();
+                              z.createUser(username, password);
                             }
                           },
                           child: const Text('Submit'),
@@ -117,24 +118,27 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Future<Info> fetchLogin(username, password) async {
-  print("$username, $password");
-  Map data = {
-    'name': username,
-    'password': password,
-  };
-  var body = json.encode(data);
-  final response = await http.post(Uri.parse('https://dev.dakshsrivastava.com/login/'), body: body);
+class DioClient {
+  final Dio _dio = Dio();
 
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    print(Info.fromJson(jsonDecode(response.body)));
-    return Info.fromJson(jsonDecode(response.body));
-    ;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load info');
+  final _baseUrl = 'https://dev.dakshsrivastava.com/';
+
+  Future<Info?> createUser(username, password) async {
+    Info? retrievedUser;
+
+    try {
+      Response response = await _dio.post(
+        _baseUrl + 'login/',
+        data: {'name': username, 'password': password},
+      );
+
+      print('User logged in: ${response.data}');
+
+      retrievedUser = Info.fromJson(response.data);
+    } catch (e) {
+      print('Error logging in: $e');
+    }
+
+    return retrievedUser;
   }
 }
