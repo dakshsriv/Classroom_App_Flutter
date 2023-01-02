@@ -84,7 +84,7 @@ def login(model: models.Login, response: Response):
         rows = cursor.fetchall()
         if not rows:
             conn.close()
-            return {"id": "NULL"}
+            return {"id": "NULL", "type": "NULL"}
         else:
             conn.close()
             return {"id": rows[0][0], "type": "teacher"}

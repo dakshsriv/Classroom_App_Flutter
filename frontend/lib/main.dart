@@ -57,60 +57,60 @@ class _LoginPageState extends State<LoginPage> {
             body: Column(children: [
               const Text("Login page"),
               Form(
-                key: _formKey,
-                child: Row(
-                    children: [ // The form follows
-                              Row(children: [
-                                const Text("Username:  "),
-                                SizedBox(
-                                    width: 200.0,                    
-                                    child: TextFormField(
-                                      validator: (String? value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter some text';
-                                          }
-                                          return null;
-                                        },
-                                      onChanged: (text) {
-                                        setState(() {
-                                          username = text;
-                                        });
-                                      },
-                                    )),
-                                const Text("Password:  "),
-                                SizedBox(
-                                    width: 200.0,
-                                    child: TextFormField(
-                                      obscureText: true,
-                                      enableSuggestions: false,
-                                      autocorrect: false,
-                                      validator: (String? value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter some text';
-                                          }
-                                          return null;
-                                        },
-                                      onChanged: (text) {
-                                        setState(() {
-                                          password = text;
-                                        });
-                                      },
-                                    )),
-                                    
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          // Validate will return true if the form is valid, or false if
-                                          // the form is invalid.
-                                          if (_formKey.currentState!.validate()) {
-                                            // Process data.
-                                          }
-                                        },
-                                        child: const Text('Submit'),
-                                      )])
+                  key: _formKey,
+                  child: Row(
+                    children: [
+                      // The form follows
+                      Row(children: [
+                        const Text("Username:  "),
+                        SizedBox(
+                            width: 200.0,
+                            child: TextFormField(
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
+                              onChanged: (text) {
+                                setState(() {
+                                  username = text;
+                                });
+                              },
+                            )),
+                        const Text("Password:  "),
+                        SizedBox(
+                            width: 200.0,
+                            child: TextFormField(
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
+                              onChanged: (text) {
+                                setState(() {
+                                  password = text;
+                                });
+                              },
+                            )),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Validate will return true if the form is valid, or false if
+                            // the form is invalid.
+                            if (_formKey.currentState!.validate()) {
+                              print("Submission");
+                              fetchLogin(username, password);
+                            }
+                          },
+                          child: const Text('Submit'),
+                        )
+                      ])
                     ],
-                  )
-                
-              ),
+                  )),
               Text("Username is: $username   "),
               Text("Password is: $password   "),
             ])));
@@ -118,17 +118,20 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 Future<Info> fetchLogin(username, password) async {
-  final response =
-      await http.post(Uri.parse('https://dev.dakshsrivastava.com/login/'),
-          body: jsonEncode(<String, String>{
-            'name': username,
-            'password': password,
-          }));
+  print("$username, $password");
+  Map data = {
+    'name': username,
+    'password': password,
+  };
+  var body = json.encode(data);
+  final response = await http.post(Uri.parse('https://dev.dakshsrivastava.com/login/'), body: body);
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
+    print(Info.fromJson(jsonDecode(response.body)));
     return Info.fromJson(jsonDecode(response.body));
+    ;
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
