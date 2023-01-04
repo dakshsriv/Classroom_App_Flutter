@@ -5,8 +5,10 @@ import 'package:dio/dio.dart';
 
 void main() async {
   await GetStorage.init();
-  runApp(const LoginPage());
+  runApp(const RegisterPage());
 }
+
+enum AccountType { student, teacher }
 
 class Info {
   final String userId;
@@ -25,16 +27,17 @@ class Info {
   }
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   String username = "";
   String password = "";
+  String accountType = "Student";
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -47,6 +50,8 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  AccountType? _type = AccountType.student;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               title: const Text("Classroom App"),
             ),
             body: Column(children: [
-              const Text("Login page"),
+              const Text("Register page"),
               Form(
                   key: _formKey,
                   child: Row(
@@ -98,6 +103,30 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                             )),
+                        ListTile(
+                          title: const Text('Student'),
+                          leading: Radio<AccountType>(
+                            value: AccountType.student,
+                            groupValue: _type,
+                            onChanged: (AccountType? value) {
+                              setState(() {
+                                _type = value;
+                              });
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: const Text('Teacher'),
+                          leading: Radio<AccountType>(
+                            value: AccountType.teacher,
+                            groupValue: _type,
+                            onChanged: (AccountType? value) {
+                              setState(() {
+                                _type = value;
+                              });
+                            },
+                          ),
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             // Validate will return true if the form is valid, or false if
@@ -110,22 +139,13 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           child: const Text('Submit'),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.blue),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, "/register/");
-                          },
-                          child: Text('Register'),
                         )
                       ])
                     ],
                   )),
               Text("Username is: $username   "),
               Text("Password is: $password   "),
+              Text("Account type is: $_type"),
             ])));
   }
 }
@@ -140,7 +160,7 @@ class DioClient {
 
     try {
       Response response = await _dio.post(
-        _baseUrl + 'login/',
+        _baseUrl + 'register/',
         data: {'name': username, 'password': password},
       );
 

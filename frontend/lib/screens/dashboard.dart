@@ -17,8 +17,20 @@ class Dashboard extends StatefulWidget {
 
 
 class _DashboardState extends State<Dashboard> {
-  String userID = box.read("userID");
-  String accountType = box.read("accountType");
+  String userID = "";
+  String accountType = "";
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      userID = box.read("userID");
+      accountType = box.read("accountType");
+    }
+    catch (e) {
+      Navigator.pushNamed(context, "/login/");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
