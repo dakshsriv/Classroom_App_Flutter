@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                               print("Submission");
                               DioClient z = DioClient();
                               z.createUser(username, password);
-                              Navigator.pushNamed(context, '/login');
+                              Navigator.pushNamed(context, '/');
                             }
                           },
                           child: const Text('Submit'),
