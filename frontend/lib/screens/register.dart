@@ -54,8 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.blue,
               title: const Text("Classroom App"),
@@ -146,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
               Text("Username is: $username   "),
               Text("Password is: $password   "),
               Text("Account type is: $_type"),
-            ])));
+            ]));
   }
 }
 

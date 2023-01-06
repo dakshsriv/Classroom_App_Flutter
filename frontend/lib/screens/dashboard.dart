@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter/scheduler.dart';
 
 void main() async {
   await GetStorage.init();
@@ -23,19 +24,14 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    try {
-      userID = box.read("userID");
-      accountType = box.read("accountType");
-    }
-    catch (e) {
-      Navigator.pushNamed(context, "/login/");
-    }
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+    Navigator.of(context).pushNamed("/login/");
+});
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(
                 backgroundColor: Colors.blue,
                 title: const Text("Classroom App")),
@@ -43,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
               Text("The user id is: $userID"),
               Text("The account type is: $accountType"),
             ])
-        )
+        
     );
   }
 }

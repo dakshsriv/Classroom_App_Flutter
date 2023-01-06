@@ -49,84 +49,82 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.blue,
-              title: const Text("Classroom App"),
-            ),
-            body: Column(children: [
-              const Text("Login page"),
-              Form(
-                  key: _formKey,
-                  child: Row(
-                    children: [
-                      // The form follows
-                      Row(children: [
-                        const Text("Username:  "),
-                        SizedBox(
-                            width: 200.0,
-                            child: TextFormField(
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                              onChanged: (text) {
-                                setState(() {
-                                  username = text;
-                                });
-                              },
-                            )),
-                        const Text("Password:  "),
-                        SizedBox(
-                            width: 200.0,
-                            child: TextFormField(
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                              onChanged: (text) {
-                                setState(() {
-                                  password = text;
-                                });
-                              },
-                            )),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Validate will return true if the form is valid, or false if
-                            // the form is invalid.
-                            if (_formKey.currentState!.validate()) {
-                              print("Submission");
-                              DioClient z = DioClient();
-                              z.createUser(username, password);
-                              Navigator.pushNamed(context, '/');
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: const Text("Classroom App"),
+        ),
+        body: Column(children: [
+          const Text("Login page"),
+          Form(
+              key: _formKey,
+              child: Row(
+                children: [
+                  // The form follows
+                  Row(children: [
+                    const Text("Username:  "),
+                    SizedBox(
+                        width: 200.0,
+                        child: TextFormField(
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
                             }
+                            return null;
                           },
-                          child: const Text('Submit'),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.blue),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, "/register/");
+                          onChanged: (text) {
+                            setState(() {
+                              username = text;
+                            });
                           },
-                          child: Text('Register'),
-                        )
-                      ])
-                    ],
-                  )),
-              Text("Username is: $username   "),
-              Text("Password is: $password   "),
-            ])));
+                        )),
+                    const Text("Password:  "),
+                    SizedBox(
+                        width: 200.0,
+                        child: TextFormField(
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          onChanged: (text) {
+                            setState(() {
+                              password = text;
+                            });
+                          },
+                        )),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Validate will return true if the form is valid, or false if
+                        // the form is invalid.
+                        if (_formKey.currentState!.validate()) {
+                          print("Submission");
+                          DioClient z = DioClient();
+                          z.createUser(username, password);
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                    TextButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.blue),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/register/");
+                      },
+                      child: Text('Register'),
+                    )
+                  ])
+                ],
+              )),
+          Text("Username is: $username   "),
+          Text("Password is: $password   "),
+        ]));
   }
 }
 
