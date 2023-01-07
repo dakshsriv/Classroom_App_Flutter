@@ -105,16 +105,13 @@ class _LoginPageState extends State<LoginPage> {
                           print("Submission");
                           DioClient z = DioClient();
                           z.createUser(username, password);
+                          Navigator.pushNamed(context, '/');
                         }
                       },
                       child: const Text('Submit'),
                     ),
                     TextButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue),
-                      ),
-                      onPressed: () {
+                        onPressed: () {
                         Navigator.pushNamed(context, "/register/");
                       },
                       child: Text('Register'),
@@ -142,12 +139,11 @@ class DioClient {
         data: {'name': username, 'password': password},
       );
 
-      print('User logged in: ${response.data}');
-
       retrievedUser = Info.fromJson(response.data);
       if (retrievedUser.userId != "NULL") {
         box.write('userID', retrievedUser.userId);
         box.write('accountType', retrievedUser.accountType);
+        print("Box values are: ${box.read('userID')}, ${box.read('accountType')}");
       }
     } catch (e) {
       print('Error logging in: $e');

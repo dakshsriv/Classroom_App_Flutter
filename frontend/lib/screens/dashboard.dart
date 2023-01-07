@@ -16,7 +16,6 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-
 class _DashboardState extends State<Dashboard> {
   String userID = "";
   String accountType = "";
@@ -24,22 +23,33 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-    Navigator.of(context).pushNamed("/login/");
-});
+    try {
+      userID = box.read('userID');
+      accountType = box.read('accountType');
+    } catch (e) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushNamed("/login/");
+      });
+    }
+    /*SchedulerBinding.instance.addPostFrameCallback((_) {
+      userID = box.read("userID");
+      accountType = box.read("accountType");
+      if (userID == null)
+      {
+        Navigator.of(context).pushNamed("/login/");
+      }
+      
+    });*/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            appBar: AppBar(
-                backgroundColor: Colors.blue,
-                title: const Text("Classroom App")),
-            body: Column(children: [
-              Text("The user id is: $userID"),
-              Text("The account type is: $accountType"),
-            ])
-        
-    );
+        appBar: AppBar(
+            backgroundColor: Colors.blue, title: const Text("Classroom App")),
+        body: Column(children: [
+          Text("The user id is: $userID"),
+          Text("The account type is: $accountType"),
+        ]));
   }
 }

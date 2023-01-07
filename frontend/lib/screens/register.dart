@@ -40,16 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
   String accountType = "Student";
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   AccountType? _type = AccountType.student;
 
   @override
