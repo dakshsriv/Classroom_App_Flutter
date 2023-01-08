@@ -45,97 +45,100 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.blue,
-              title: const Text("Classroom App"),
-            ),
-            body: Column(children: [
-              const Text("Register page"),
-              Form(
-                  key: _formKey,
-                  child: Row(
-                    children: [
-                      // The form follows
-                      Row(children: [
-                        const Text("Username:  "),
-                        SizedBox(
-                            width: 200.0,
-                            child: TextFormField(
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                              onChanged: (text) {
-                                setState(() {
-                                  username = text;
-                                });
-                              },
-                            )),
-                        const Text("Password:  "),
-                        SizedBox(
-                            width: 200.0,
-                            child: TextFormField(
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                              onChanged: (text) {
-                                setState(() {
-                                  password = text;
-                                });
-                              },
-                            )),
-                        ListTile(
-                          title: const Text('Student'),
-                          leading: Radio<AccountType>(
-                            value: AccountType.student,
-                            groupValue: _type,
-                            onChanged: (AccountType? value) {
-                              setState(() {
-                                _type = value;
-                              });
-                            },
-                          ),
-                        ),
-                        ListTile(
-                          title: const Text('Teacher'),
-                          leading: Radio<AccountType>(
-                            value: AccountType.teacher,
-                            groupValue: _type,
-                            onChanged: (AccountType? value) {
-                              setState(() {
-                                _type = value;
-                              });
-                            },
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Validate will return true if the form is valid, or false if
-                            // the form is invalid.
-                            if (_formKey.currentState!.validate()) {
-                              print("Submission");
-                              DioClient z = DioClient();
-                              z.createUser(username, password);
-                              Navigator.pushNamed(context, '/');
-                            }
-                          },
-                          child: const Text('Submit'),
-                        )
-                      ])
-                    ],
-                  )),
-              Text("Username is: $username   "),
-              Text("Password is: $password   "),
-              Text("Account type is: $_type"),
-            ]));
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: const Text("Classroom App"),
+        ),
+        body: Column(children: [
+          const Text("Register page"),
+          Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const Text("Username:  "),
+                  SizedBox(
+                      width: 200.0,
+                      child: TextFormField(
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onChanged: (text) {
+                          setState(() {
+                            username = text;
+                          });
+                        },
+                      )),
+                  const Text("Password:  "),
+                  SizedBox(
+                      width: 200.0,
+                      child: TextFormField(
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onChanged: (text) {
+                          setState(() {
+                            password = text;
+                          });
+                        },
+                      )),
+                  ListTile(
+                    title: const Text('Student'),
+                    leading: Radio<AccountType>(
+                      value: AccountType.student,
+                      groupValue: _type,
+                      onChanged: (AccountType? value) {
+                        setState(() {
+                          _type = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Teacher'),
+                    leading: Radio<AccountType>(
+                      value: AccountType.teacher,
+                      groupValue: _type,
+                      onChanged: (AccountType? value) {
+                        setState(() {
+                          _type = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Validate will return true if the form is valid, or false if
+                      // the form is invalid.
+                      if (_formKey.currentState!.validate()) {
+                        print("Submission");
+                        DioClient z = DioClient();
+                        z.register(username, password, _type);
+                        Navigator.pushNamed(context, '/login/');
+                      }
+                    },
+                    child: const Text('Submit'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/login/");
+                    },
+                    child: const Text('Login'),
+                  ),
+                ],
+              )),
+          Text("Username is: $username   "),
+          Text("Password is: $password   "),
+          Text("Account type is: $_type"),
+        ]));
   }
 }
 
@@ -144,26 +147,24 @@ class DioClient {
   final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
-  Future<Info?> createUser(username, password) async {
+  Future<Info?> register(username, password, type) async {
     Info? retrievedUser;
 
     try {
+      String accountType = "Student";
+      if (type == AccountType.teacher) {
+        accountType = "Teacher";
+      }
       Response response = await _dio.post(
         _baseUrl + 'register/',
-        data: {'name': username, 'password': password},
+        data: {'name': username, 'password': password, "account_type": accountType},
       );
 
       print('User logged in: ${response.data}');
-
-      retrievedUser = Info.fromJson(response.data);
-      if (retrievedUser.userId != "NULL") {
-        box.write('userID', retrievedUser.userId);
-        box.write('accountType', retrievedUser.accountType);
-      }
     } catch (e) {
       print('Error logging in: $e');
     }
 
-    return retrievedUser;
+    return 0;
   }
 }

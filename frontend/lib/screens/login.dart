@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                         if (_formKey.currentState!.validate()) {
                           print("Submission");
                           DioClient z = DioClient();
-                          z.createUser(username, password);
+                          z.login(username, password);
                           Navigator.pushNamed(context, '/');
                         }
                       },
@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {
                         Navigator.pushNamed(context, "/register/");
                       },
-                      child: Text('Register'),
+                      child: const Text('Register'),
                     )
                   ])
                 ],
@@ -130,12 +130,12 @@ class DioClient {
   final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
-  Future<Info?> createUser(username, password) async {
+  Future<Info?> login(username, password) async {
     Info? retrievedUser;
 
     try {
       Response response = await _dio.post(
-        _baseUrl + 'login/',
+        _baseUrl + 'register/',
         data: {'name': username, 'password': password},
       );
 
