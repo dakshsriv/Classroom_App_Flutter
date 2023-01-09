@@ -147,7 +147,7 @@ class DioClient {
   final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
-  Future<Info?> register(username, password, type) async {
+  void register(username, password, type) async {
     Info? retrievedUser;
 
     try {
@@ -165,6 +165,5 @@ class DioClient {
       print('Error logging in: $e');
     }
 
-    return 0;
   }
 }
