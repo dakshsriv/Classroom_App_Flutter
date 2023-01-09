@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 
 void main() async {
   await GetStorage.init();
-  runApp(const LoginPage());
+  runApp(const CreateClassroomPage());
 }
 
 class Info {
@@ -25,14 +25,14 @@ class Info {
   }
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class CreateClassroomPage extends StatefulWidget {
+  const CreateClassroomPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<CreateClassroomPage> createState() => _CreateClassroomPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _CreateClassroomPageState extends State<CreateClassroomPage> {
   String username = "";
   String password = "";
   final _formKey = GlobalKey<FormState>();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screens/login.dart';
 import 'package:frontend/screens/register.dart';
 import 'package:frontend/screens/dashboard.dart';
+import 'package:frontend/screens/create_classroom.dart';
 
 void main() async {
   runApp(const Main());
@@ -23,6 +24,7 @@ class Main extends StatelessWidget {
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/login/': (context) => const LoginPage(),
         '/register/': (context) => const RegisterPage(),
+        '/class_create/': (context) => const CreateClassroomPage(),
       },
     );
   }

@@ -122,14 +122,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         print("Submission");
                         DioClient z = DioClient();
                         z.register(username, password, _type);
-                        Navigator.pushNamed(context, '/login/');
+                        Navigator.pushReplacementNamed(context, '/login/');
                       }
                     },
                     child: const Text('Submit'),
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/login/");
+                      Navigator.pushReplacementNamed(context, "/login/");
                     },
                     child: const Text('Login'),
                   ),
