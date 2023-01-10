@@ -131,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, "/login/");
                     },
-                    child: const Text('Login'),
+                    child: const Text('Cancel'),
                   ),
                 ],
               )),
@@ -148,7 +148,6 @@ class DioClient {
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
   void register(username, password, type) async {
-    Info? retrievedUser;
 
     try {
       String accountType = "Student";
@@ -156,7 +155,7 @@ class DioClient {
         accountType = "Teacher";
       }
       Response response = await _dio.post(
-        _baseUrl + 'register/',
+        '${_baseUrl}register/',
         data: {'name': username, 'password': password, "account_type": accountType},
       );
 

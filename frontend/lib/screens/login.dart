@@ -105,14 +105,14 @@ class _LoginPageState extends State<LoginPage> {
                           print("Submission");
                           DioClient z = DioClient();
                           z.login(username, password);
-                          Navigator.pushNamed(context, '/');
+                           Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
                         }
                       },
-                      child: const Text('Submit'),
+                      child: const Text('Login'),
                     ),
                     TextButton(
                         onPressed: () {
-                        Navigator.pushNamed(context, "/register/");
+                         Navigator.pushNamedAndRemoveUntil(context, "/register/", (_) => false);
                       },
                       child: const Text('Register'),
                     )
@@ -135,7 +135,7 @@ class DioClient {
 
     try {
       Response response = await _dio.post(
-        _baseUrl + 'login/',
+        '${_baseUrl}login/',
         data: {'name': username, 'password': password},
       );
 

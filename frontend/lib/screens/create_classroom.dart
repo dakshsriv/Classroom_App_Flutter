@@ -25,6 +25,8 @@ class Info {
   }
 }
 
+var box = GetStorage();
+
 class CreateClassroomPage extends StatefulWidget {
   const CreateClassroomPage({super.key});
 
@@ -32,9 +34,10 @@ class CreateClassroomPage extends StatefulWidget {
   State<CreateClassroomPage> createState() => _CreateClassroomPageState();
 }
 
+
 class _CreateClassroomPageState extends State<CreateClassroomPage> {
-  String username = "";
-  String password = "";
+  String title = "";
+  String description = "";
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -55,14 +58,14 @@ class _CreateClassroomPageState extends State<CreateClassroomPage> {
           title: const Text("Classroom App"),
         ),
         body: Column(children: [
-          const Text("Login page"),
+          const Text("Create a classroom"),
           Form(
               key: _formKey,
               child: Row(
                 children: [
                   // The form follows
                   Row(children: [
-                    const Text("Username:  "),
+                    const Text("Title:  "),
                     SizedBox(
                         width: 200.0,
                         child: TextFormField(
@@ -74,17 +77,14 @@ class _CreateClassroomPageState extends State<CreateClassroomPage> {
                           },
                           onChanged: (text) {
                             setState(() {
-                              username = text;
+                              title = text;
                             });
                           },
                         )),
-                    const Text("Password:  "),
+                    const Text("Description:  "),
                     SizedBox(
                         width: 200.0,
                         child: TextFormField(
-                          obscureText: true,
-                          enableSuggestions: false,
-                          autocorrect: false,
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter some text';
@@ -93,7 +93,7 @@ class _CreateClassroomPageState extends State<CreateClassroomPage> {
                           },
                           onChanged: (text) {
                             setState(() {
-                              password = text;
+                              description = text;
                             });
                           },
                         )),
@@ -104,39 +104,40 @@ class _CreateClassroomPageState extends State<CreateClassroomPage> {
                         if (_formKey.currentState!.validate()) {
                           print("Submission");
                           DioClient z = DioClient();
-                          z.login(username, password);
-                          Navigator.pushNamed(context, '/');
+                          z.create(title, description);
+                          Navigator.pushReplacementNamed(context, '/');
+
                         }
                       },
-                      child: const Text('Submit'),
+                      child: const Text('Create'),
                     ),
                     TextButton(
-                        onPressed: () {
-                        Navigator.pushNamed(context, "/register/");
-                      },
-                      child: const Text('Register'),
-                    )
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, "/");
+                    },
+                    child: const Text('Back to dashboard'),
+                  ),
                   ])
                 ],
               )),
-          Text("Username is: $username   "),
-          Text("Password is: $password   "),
+          Text("title is: $title   "),
+          Text("description is: $description   "),
         ]));
   }
 }
 
 class DioClient {
   final Dio _dio = Dio();
-  final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
+  String userID = box.read("userID");
 
-  Future<Info?> login(username, password) async {
+  Future<Info?> create(title, description) async {
     Info? retrievedUser;
 
     try {
       Response response = await _dio.post(
-        _baseUrl + 'login/',
-        data: {'name': username, 'password': password},
+        '${_baseUrl}classrooms/',
+        data: {'title': title, 'description': description, 'teacher_id': userID},
       );
 
       retrievedUser = Info.fromJson(response.data);

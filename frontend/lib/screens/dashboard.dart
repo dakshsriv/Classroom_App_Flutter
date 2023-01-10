@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
+import 'package:dio/dio.dart';
+import 'package:bulleted_list/bulleted_list.dart';
+
 
 void main() async {
   await GetStorage.init();
@@ -20,6 +23,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   String userID = "";
   String accountType = "";
+  var classes = [];
 
   @override
   void initState() {
@@ -30,9 +34,15 @@ class _DashboardState extends State<Dashboard> {
       print("userID: $userID, accountType: $accountType");
     } catch (e) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushNamedAndRemoveUntil(context, "/login/", (_) => false);("/login/");
-
+        Navigator.pushNamedAndRemoveUntil(context, "/login/", (_) => false);
       });
+    }
+    DioClient z = DioClient();
+    if (accountType == "student") {
+      z.classes_student(userID);
+    } else {
+      print("Passing $userID as userID");
+      z.classes_teacher(userID);
     }
     /*SchedulerBinding.instance.addPostFrameCallback((_) {
       userID = box.read("userID");
@@ -58,11 +68,13 @@ class _DashboardState extends State<Dashboard> {
               onPressed: () {
                 box.write("userID", "");
                 box.write("accountType", "");
-                        Navigator.pushNamedAndRemoveUntil(context, "/class_create/", (_) => false);("/login/");
-
+                Navigator.pushNamedAndRemoveUntil(
+                    context, "/class_create/", (_) => false);
+                ("/login/");
               },
               child: const Text('Log out'),
             ),
+            
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
@@ -72,7 +84,8 @@ class _DashboardState extends State<Dashboard> {
                 Text('Teacher account!'),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/class_create/");
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "/class_create/", (_) => false);
                   },
                   child: const Text('Create a class'),
                 )
@@ -80,5 +93,31 @@ class _DashboardState extends State<Dashboard> {
             ),
           ])
         ]));
+  }
+}
+
+class DioClient {
+  final Dio _dio = Dio();
+  final box = GetStorage();
+  final _baseUrl = 'https://dev.dakshsrivastava.com/';
+
+  void classes_student(id) async {
+    try {
+      Response response = await _dio.get('${_baseUrl}classes/$id');
+
+      print('Classes: ${response.data}');
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  void classes_teacher(id) async {
+    try {
+      Response response = await _dio.get('${_baseUrl}classrooms/teacher/$id');
+
+      print('Classes: ${response.data}');
+    } catch (e) {
+      print('Error getting classes in: $e');
+    }
   }
 }

@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   dio: ^4.0.0
   flutter_conditional_rendering: ^2.0.0
+  bulleted_list: ^0.0.1+0.1a
 
 dev_dependencies:
   flutter_test:
