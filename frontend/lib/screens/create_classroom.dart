@@ -104,7 +104,7 @@ class _CreateClassroomPageState extends State<CreateClassroomPage> {
                         if (_formKey.currentState!.validate()) {
                           print("Submission");
                           DioClient z = DioClient();
-                          z.create(title, description);
+                          z.create(title, description, context);
                           Navigator.pushReplacementNamed(context, '/');
 
                         }
@@ -131,7 +131,7 @@ class DioClient {
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
   String userID = box.read("userID");
 
-  Future<Info?> create(title, description) async {
+  Future<Info?> create(title, description, context) async {
     Info? retrievedUser;
 
     try {
@@ -140,12 +140,10 @@ class DioClient {
         data: {'title': title, 'description': description, 'teacher_id': userID},
       );
 
-      retrievedUser = Info.fromJson(response.data);
-      if (retrievedUser.userId != "NULL") {
-        box.write('userID', retrievedUser.userId);
-        box.write('accountType', retrievedUser.accountType);
-        print("Box values are: ${box.read('userID')}, ${box.read('accountType')}");
-      }
+      Navigator.pushNamedAndRemoveUntil(context, "/login/", (_) => false);
+
+      
+      
     } catch (e) {
       print('Error logging in: $e');
     }

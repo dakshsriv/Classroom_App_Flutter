@@ -104,15 +104,16 @@ class _LoginPageState extends State<LoginPage> {
                         if (_formKey.currentState!.validate()) {
                           print("Submission");
                           DioClient z = DioClient();
-                          z.login(username, password);
-                           Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
+                          z.login(username, password, context);
+                          
                         }
                       },
                       child: const Text('Login'),
                     ),
                     TextButton(
-                        onPressed: () {
-                         Navigator.pushNamedAndRemoveUntil(context, "/register/", (_) => false);
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/register/", (_) => false);
                       },
                       child: const Text('Register'),
                     )
@@ -130,7 +131,7 @@ class DioClient {
   final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
-  Future<Info?> login(username, password) async {
+  Future<Info?> login(username, password, context) async {
     Info? retrievedUser;
 
     try {
@@ -141,9 +142,14 @@ class DioClient {
 
       retrievedUser = Info.fromJson(response.data);
       if (retrievedUser.userId != "NULL") {
+        print(
+            "After logging in, the ID is ${retrievedUser.userId} and the type is ${retrievedUser.accountType}");
         box.write('userID', retrievedUser.userId);
         box.write('accountType', retrievedUser.accountType);
-        print("Box values are: ${box.read('userID')}, ${box.read('accountType')}");
+        Navigator.pushNamedAndRemoveUntil(
+                              context, "/", (_) => false);
+        print(
+            "The box values were updated to ${box.read('userID')} and the type is ${box.read('accountType')}");
       }
     } catch (e) {
       print('Error logging in: $e');
