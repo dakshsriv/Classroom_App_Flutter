@@ -3,8 +3,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:dio/dio.dart';
-import 'package:bulleted_list/bulleted_list.dart';
-
 
 void main() async {
   await GetStorage.init();
@@ -24,10 +22,12 @@ class _DashboardState extends State<Dashboard> {
   String userID = "";
   String accountType = "";
   var classes = [];
+  
 
   @override
   void initState() {
     super.initState();
+
     try {
       userID = box.read('userID');
       accountType = box.read('accountType');
@@ -69,19 +69,22 @@ class _DashboardState extends State<Dashboard> {
                 box.write("userID", "");
                 box.write("accountType", "");
                 Navigator.pushNamedAndRemoveUntil(
-                    context, "/class_create/", (_) => false);
-                ("/login/");
+                    context, "/login/", (_) => false);
               },
               child: const Text('Log out'),
             ),
-            
+            const Text("Classes:"),
+            Column(
+                children: classes
+                    .map((c) => Text("  • ${c[0]}"))
+                    .toList()),
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
-              widgetBuilder: (BuildContext context) => Text('Student account'),
+              widgetBuilder: (BuildContext context) => const Text('Student account'),
               fallbackBuilder: (BuildContext context) => Row(children: [
-                Text('Teacher account!'),
+                const Text('Teacher account!'),
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(
