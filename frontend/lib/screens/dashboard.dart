@@ -21,7 +21,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   String userID = "";
   String accountType = "";
-  dynamic classes = [];
+  List<dynamic> classes = [];
 
   @override
   void initState() {
@@ -38,15 +38,8 @@ class _DashboardState extends State<Dashboard> {
         Navigator.pushNamedAndRemoveUntil(context, "/login/", (_) => false);
       });
     }
-    DioClient z = DioClient();
-    if (accountType == "student") {
-      dynamic x = z.classes_student(userID);
-      classes = x;
-    } else {
-      print("Passing $userID as userID");
-      dynamic x = z.classes_teacher(userID);
-      classes = x;
-    }
+    y();
+
     /*SchedulerBinding.instance.addPostFrameCallback((_) {
       userID = box.read("userID");
       accountType = box.read("accountType");
@@ -56,6 +49,19 @@ class _DashboardState extends State<Dashboard> {
       }
       
     });*/
+  }
+
+  @override
+  void y() async {
+    DioClient z = DioClient();
+    if (accountType == "student") {
+      var x = await z.classes_student(userID) as List<dynamic>; // Add await
+      classes = x;
+    } else {
+      print("Passing $userID as userID");
+      var x = await z.classes_teacher(userID) as List<dynamic>; // Add await
+      classes = x;
+    }
   }
 
   @override
@@ -77,7 +83,9 @@ class _DashboardState extends State<Dashboard> {
               child: const Text('Log out'),
             ),
             const Text("Classes:"),
-            Column(children: classes.map<Widget>((c) => Text("  • ${c[0]}")).toList()),
+            Column(
+                children:
+                    classes.map<Widget>((c) => Text("  • ${c[0]}")).toList()),
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
@@ -110,18 +118,20 @@ class DioClient {
       Response response = await _dio.get('${_baseUrl}classes/$id');
 
       print('Classes: ${response.data}');
-      return response.data;
+      return response.data as List<dynamic>;
     } catch (e) {
       print('Error getting classes: $e');
     }
   }
 
-dynamic classes_teacher(id) async {
+  dynamic classes_teacher(id) async {
     try {
       Response response = await _dio.get('${_baseUrl}classrooms/teacher/$id');
 
       print('Classes: ${response.data}');
-      return response.data;
+      print('Classes type: ${response.data.runtimeType}');
+
+      return response.data as List<dynamic>;
     } catch (e) {
       print('Error getting classes in: $e');
     }
