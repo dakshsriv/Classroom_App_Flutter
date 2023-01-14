@@ -22,6 +22,8 @@ class _DashboardState extends State<Dashboard> {
   String userID = "";
   String accountType = "";
   List<dynamic> classes = [];
+  String newClass = "";
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -56,11 +58,15 @@ class _DashboardState extends State<Dashboard> {
     DioClient z = DioClient();
     if (accountType == "student") {
       var x = await z.classes_student(userID) as List<dynamic>; // Add await
-      classes = x;
+      setState(() {
+        classes = x;
+      });
     } else {
       print("Passing $userID as userID");
       var x = await z.classes_teacher(userID) as List<dynamic>; // Add await
-      classes = x;
+      setState(() {
+        classes = x;
+      });
     }
   }
 
@@ -90,8 +96,47 @@ class _DashboardState extends State<Dashboard> {
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
-              widgetBuilder: (BuildContext context) =>
-                  const Text('Student account'),
+              widgetBuilder: (BuildContext context) => Column(children: [
+                Text('Student account'),
+                Form(
+                    key: _formKey,
+                    child: Row(
+                      children: [
+                        // The form follows
+                        Row(children: [
+                          const Text("Username:  "),
+                          SizedBox(
+                              width: 200.0,
+                              child: TextFormField(
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (text) {
+                                  setState(() {
+                                    newClass = text;
+                                  });
+                                },
+                              )),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Validate will return true if the form is valid, or false if
+                              // the form is invalid.
+                              if (_formKey.currentState!.validate()) {
+                                print("Submission");
+                                DioClient z = DioClient();
+                                z.join(userID, newClass, context);
+                                setState(() {});
+                              }
+                            },
+                            child: const Text('Join'),
+                          ),
+                        ])
+                      ],
+                    ))
+              ]),
               fallbackBuilder: (BuildContext context) => Row(children: [
                 const Text('Teacher account!'),
                 TextButton(
@@ -132,6 +177,17 @@ class DioClient {
       print('Classes type: ${response.data.runtimeType}');
 
       return response.data as List<dynamic>;
+    } catch (e) {
+      print('Error getting classes in: $e');
+    }
+  }
+
+  void join(userID, classID, context) async {
+    try {
+      Response response = await _dio.post('${_baseUrl}classes', data: {
+        'student_id': userID,
+        'class_id': classID,
+      });
     } catch (e) {
       print('Error getting classes in: $e');
     }
