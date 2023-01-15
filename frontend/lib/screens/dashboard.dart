@@ -23,6 +23,7 @@ class _DashboardState extends State<Dashboard> {
   String accountType = "";
   List<dynamic> classes = [];
   String newClass = "";
+  String waste = "";
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -51,6 +52,19 @@ class _DashboardState extends State<Dashboard> {
       }
       
     });*/
+  }
+
+  @override
+  void joinClass() async {
+    DioClient z = DioClient();
+    int w = await z.join(userID, newClass, context) as int;
+    if (w == 1) {
+      print("Reached");
+      setState(() {
+        waste = "1";
+      });
+    }
+    print(w);
   }
 
   @override
@@ -104,7 +118,7 @@ class _DashboardState extends State<Dashboard> {
                       children: [
                         // The form follows
                         Row(children: [
-                          const Text("Username:  "),
+                          const Text("Join class:  "),
                           SizedBox(
                               width: 200.0,
                               child: TextFormField(
@@ -126,9 +140,8 @@ class _DashboardState extends State<Dashboard> {
                               // the form is invalid.
                               if (_formKey.currentState!.validate()) {
                                 print("Submission");
-                                DioClient z = DioClient();
-                                z.join(userID, newClass, context);
-                                setState(() {});
+
+                                joinClass();
                               }
                             },
                             child: const Text('Join'),
@@ -182,14 +195,18 @@ class DioClient {
     }
   }
 
-  void join(userID, classID, context) async {
+  dynamic join(userID, classID, context) async {
     try {
-      Response response = await _dio.post('${_baseUrl}classes', data: {
+      Response response = await _dio.post('${_baseUrl}classes/', data: {
         'student_id': userID,
         'class_id': classID,
       });
+      if (response.data != "NULL") {
+        return 1;
+      }
     } catch (e) {
       print('Error getting classes in: $e');
+      return 0;
     }
   }
 }
