@@ -40,6 +40,7 @@ class _DashboardState extends State<Dashboard> {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamedAndRemoveUntil(context, "/login/", (_) => false);
       });
+      print('Not logged in');
     }
     y();
 
@@ -84,6 +85,11 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  void send(context, c) async {
+    box.write("class", c);
+    Navigator.pushNamedAndRemoveUntil(context, "/classroom/", (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,8 +110,14 @@ class _DashboardState extends State<Dashboard> {
             ),
             const Text("Classes:"),
             Column(
-                children:
-                    classes.map<Widget>((c) => Text("  • ${c[0]}")).toList()),
+                children: classes
+                    .map<Widget>((c) => TextButton(
+                          onPressed: () {
+                            send(context, c[0]);
+                          },
+                          child: Text("  • ${c[0]}"),
+                        ))
+                    .toList()),
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
@@ -173,6 +185,7 @@ class DioClient {
 
   dynamic classes_student(id) async {
     try {
+      print('Sending to ${_baseUrl}classes/$id');
       Response response = await _dio.get('${_baseUrl}classes/$id');
 
       print('Classes: ${response.data}');

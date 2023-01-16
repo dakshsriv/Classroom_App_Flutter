@@ -3,6 +3,8 @@ import 'package:frontend/screens/login.dart';
 import 'package:frontend/screens/register.dart';
 import 'package:frontend/screens/dashboard.dart';
 import 'package:frontend/screens/create_classroom.dart';
+import 'package:frontend/screens/classroom.dart';
+
 
 void main() async {
   runApp(const Main());
@@ -25,6 +27,7 @@ class Main extends StatelessWidget {
         '/login/': (context) => const LoginPage(),
         '/register/': (context) => const RegisterPage(),
         '/class_create/': (context) => const CreateClassroomPage(),
+        '/classroom/': (context) => const Classroom(),
       },
     );
   }

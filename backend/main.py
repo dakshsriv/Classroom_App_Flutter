@@ -271,7 +271,7 @@ def delete_classroom(response: Response, delete_id):
 ########### Enrollment/Deregistration in a class
 
 
-@app.get("{student_id}", status_code=200)
+@app.get("/classes/{student_id}", status_code=200)
 def get_classes(response: Response, student_id):
     conn, cursor = start_db()
     cursor.execute(
