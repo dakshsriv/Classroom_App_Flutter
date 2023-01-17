@@ -115,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
                           onPressed: () {
                             send(context, c[0]);
                           },
-                          child: Text("  • ${c[0]}"),
+                          child: Text("  • ${c[1]}"),
                         ))
                     .toList()),
             Conditional.single(

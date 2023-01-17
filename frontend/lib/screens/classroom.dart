@@ -23,6 +23,9 @@ class _ClassroomState extends State<Classroom> {
   String accountType = "";
   String classID = "";
   List<dynamic> info = [];
+  String title = "";
+  String description = "";
+  String teacherID = "";
   List<dynamic> people = [];
 
   void setup() async {
@@ -33,7 +36,19 @@ class _ClassroomState extends State<Classroom> {
       accountType = await box.read('accountType');
       classID = await box.read('class');
       print("userID: $userID, accountType: $accountType, classID: $classID");
+      DioClient x = DioClient();
+      var information = await x.info();
+      print("information is ${information[0]}");
+      var peoplec = await x.people();
+      print("people are $people");
+      setState(() {
+        title = information[0][1];
+        description = information[0][2];
+        teacherID = information[0][3];
+        people = peoplec;
+      });
     } catch (e) {
+      print("Fail");
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
       });
@@ -71,6 +86,10 @@ class _ClassroomState extends State<Classroom> {
               },
               child: const Text('All classes'),
             ),
+            Text("Class ID: $classID"),
+            Text("Class Name: $title"),
+            Text("Class Description: $description"),
+            Text("Teacher: $teacherID"),
             const Text("People:"),
             Column(
                 children:
@@ -79,18 +98,10 @@ class _ClassroomState extends State<Classroom> {
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
-              widgetBuilder: (BuildContext context) => Column(children: [
+              widgetBuilder: (BuildContext context) => Column(children: const [
                 Text('Student account'),
               ]),
               fallbackBuilder: (BuildContext context) => Row(children: [
-                const Text('Teacher account!'),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, "/class_create/", (_) => false);
-                  },
-                  child: const Text('Create a class'),
-                )
               ]),
             ),
           ])
@@ -103,12 +114,26 @@ class DioClient {
   final box = GetStorage();
   final _baseUrl = 'https://dev.dakshsrivastava.com/';
 
-  dynamic info(id) async {
+  dynamic info() async {
+    var id = await box.read("class");
     try {
-      print('Sending to ${_baseUrl}classes/$id');
-      Response response = await _dio.post('${_baseUrl}classroom/class/$id');
+      print('Sending to ${_baseUrl}classrooms/class/$id');
+      Response response = await _dio.get('${_baseUrl}classrooms/class/$id');
 
-      print('Classes: ${response.data}');
+      print('Class Info: ${response.data}');
+      return response.data as List<dynamic>;
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic people() async {
+    var id = await box.read("class");
+    try {
+      print('Sending to ${_baseUrl}classrooms/people/$id');
+      Response response = await _dio.get('${_baseUrl}classrooms/people/$id');
+
+      print('People: ${response.data}');
       return response.data as List<dynamic>;
     } catch (e) {
       print('Error getting classes: $e');
