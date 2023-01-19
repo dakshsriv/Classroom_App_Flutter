@@ -98,10 +98,32 @@ class _ClassroomState extends State<Classroom> {
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
-              widgetBuilder: (BuildContext context) => Column(children: const [
+              widgetBuilder: (BuildContext context) => Column(children:  [
                 Text('Student account'),
+                TextButton(
+                  onPressed: () {
+                    DioClient z = DioClient();
+                    z.deregister(userID);
+                    Navigator.pushReplacementNamed(context, "/");
+                  },
+                  child: const Text('Deregister'),
+                ),
               ]),
               fallbackBuilder: (BuildContext context) => Row(children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, "/class_edit/");
+                  },
+                  child: const Text('Edit Classroom'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    DioClient z = DioClient();
+                    z.delete();
+                    Navigator.pushReplacementNamed(context, "/");
+                  },
+                  child: const Text('Delete Classroom'),
+                ),
               ]),
             ),
           ])
@@ -135,6 +157,27 @@ class DioClient {
 
       print('People: ${response.data}');
       return response.data as List<dynamic>;
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic delete() async {
+    var id = await box.read("class");
+    try {
+      Response response = await _dio.delete('${_baseUrl}classrooms/$id');
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic deregister(userID) async {
+    var id = await box.read("class");
+    try {
+      Response response = await _dio.put('${_baseUrl}classes/', data: {
+        'student_id': userID,
+        'class_id': id,
+      });
     } catch (e) {
       print('Error getting classes: $e');
     }

@@ -215,6 +215,7 @@ class DioClient {
         'class_id': classID,
       });
       if (response.data != "NULL") {
+        Navigator.pushReplacementNamed(context, "/");
         return 1;
       }
     } catch (e) {

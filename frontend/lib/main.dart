@@ -4,6 +4,7 @@ import 'package:frontend/screens/register.dart';
 import 'package:frontend/screens/dashboard.dart';
 import 'package:frontend/screens/create_classroom.dart';
 import 'package:frontend/screens/classroom.dart';
+import 'package:frontend/screens/edit_classroom.dart';
 
 
 void main() async {
@@ -28,6 +29,7 @@ class Main extends StatelessWidget {
         '/register/': (context) => const RegisterPage(),
         '/class_create/': (context) => const CreateClassroomPage(),
         '/classroom/': (context) => const Classroom(),
+        '/class_edit/': (context) => const EditClassroomPage(),
       },
     );
   }
