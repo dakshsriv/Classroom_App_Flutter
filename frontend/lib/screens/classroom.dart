@@ -27,6 +27,7 @@ class _ClassroomState extends State<Classroom> {
   String description = "";
   String teacherID = "";
   List<dynamic> people = [];
+  List<dynamic> assignments = [];
 
   void setup() async {
     try {
@@ -41,11 +42,13 @@ class _ClassroomState extends State<Classroom> {
       print("information is ${information[0]}");
       var peoplec = await x.people();
       print("people are $people");
+      var assignmentc = await x.assignments();
       setState(() {
         title = information[0][1];
         description = information[0][2];
         teacherID = information[0][3];
         people = peoplec;
+        assignments = assignmentc;
       });
     } catch (e) {
       print("Fail");
@@ -94,11 +97,15 @@ class _ClassroomState extends State<Classroom> {
             Column(
                 children:
                     people.map<Widget>((c) => Text("  • ${c[0]}")).toList()),
+            const Text("Assignments:"),
+            Column(
+                children:
+                    assignments.map<Widget>((c) => Text("  • ${c[1]}")).toList()),
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
-              widgetBuilder: (BuildContext context) => Column(children:  [
+              widgetBuilder: (BuildContext context) => Column(children: [
                 Text('Student account'),
                 TextButton(
                   onPressed: () {
@@ -123,6 +130,13 @@ class _ClassroomState extends State<Classroom> {
                     Navigator.pushReplacementNamed(context, "/");
                   },
                   child: const Text('Delete Classroom'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, "/assignment_create/");
+                  },
+                  child: const Text('Create Assignment'),
                 ),
               ]),
             ),
@@ -178,6 +192,19 @@ class DioClient {
         'student_id': userID,
         'class_id': id,
       });
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic assignments() async {
+    var id = await box.read("class");
+    try {
+      print('Sending to ${_baseUrl}assignments/class/$id');
+      Response response = await _dio.get('${_baseUrl}assignments/class/$id');
+
+      print('Assignments: ${response.data}');
+      return response.data as List<dynamic>;
     } catch (e) {
       print('Error getting classes: $e');
     }
