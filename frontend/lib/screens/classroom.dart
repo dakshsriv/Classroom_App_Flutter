@@ -99,8 +99,16 @@ class _ClassroomState extends State<Classroom> {
                     people.map<Widget>((c) => Text("  • ${c[0]}")).toList()),
             const Text("Assignments:"),
             Column(
-                children:
-                    assignments.map<Widget>((c) => Text("  • ${c[1]}")).toList()),
+                children: assignments
+                    .map<Widget>((c) => TextButton(
+                          onPressed: () {
+                            box.write("assignment", c[0]);
+                            Navigator.pushReplacementNamed(
+                                context, "/assignment/");
+                          },
+                          child: Text("  • ${c[1]}"),
+                        ))
+                    .toList()),
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
