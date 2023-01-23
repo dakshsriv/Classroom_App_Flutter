@@ -79,13 +79,14 @@ class _AssignmentState extends State<Assignment> {
             ),
             Text("Assignment Name: $title"),
             Text("Assignment Description: $description"),
-             /*
+             
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
               widgetBuilder: (BuildContext context) => Column(children: [
                 Text('Student account'),
+                /*
                 TextButton(
                   onPressed: () {
                     DioClient z = DioClient();
@@ -93,13 +94,14 @@ class _AssignmentState extends State<Assignment> {
                     Navigator.pushReplacementNamed(context, "/");
                   },
                   child: const Text('Deregister'),
-                ),
-              ]),
+                ), */
+              ]), 
+              
               fallbackBuilder: (BuildContext context) => Row(children: [
                
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/class_edit/");
+                    Navigator.pushReplacementNamed(context, "/assignment_edit/");
                   },
                   child: const Text('Edit Assignment'),
                 ),
@@ -108,20 +110,20 @@ class _AssignmentState extends State<Assignment> {
                   onPressed: () {
                     DioClient z = DioClient();
                     z.delete();
-                    Navigator.pushReplacementNamed(context, "/");
+                    Navigator.pushReplacementNamed(context, "/classroom/");
                   },
                   child: const Text('Delete Assignment'),
                 ),
-                
+                /*
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(
                         context, "/assignment_create/");
                   },
                   child: const Text('Create Assignment'),
-                ),
+                ) , */
               ]),
-            )*/
+            )
           ])
           ,
           TextButton(
@@ -147,6 +149,15 @@ class DioClient {
 
       print('Assignment Info: ${response.data}');
       return response.data as List<dynamic>;
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic delete() async {
+    var id = await box.read("assignment");
+    try {
+      Response response = await _dio.delete('${_baseUrl}assignments/$id');
     } catch (e) {
       print('Error getting classes: $e');
     }
