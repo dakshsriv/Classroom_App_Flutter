@@ -23,27 +23,36 @@ class _AssignmentState extends State<Assignment> {
   String title = "";
   String description = "";
   String assignmentID = "";
+  String status = "Unfinished";
 
   void setup() async {
     try {
-      print(
-          "Box values are: ${box.read('userID')}, ${box.read('accountType')}");
-      assignmentID = await box.read('assignment');
-      DioClient x = DioClient();
-      var information = await x.info();
-      print("information is ${information[0]}");
-      info = await x.info();
-      setState(() {
-        title = info[0][1];
-        description = info[0][2];
-
-      });
+    print("Box values are: ${box.read('userID')}, ${box.read('accountType')}");
+    assignmentID = await box.read('assignment');
+    DioClient x = DioClient();
+    var information = await x.info();
+    print("information is ${information[0]}");
+    info = await x.info();
+    if (await box.read('accountType') == "student") {
+      dynamic statusc = await x.getStatus();
+      statusc = statusc[0][2];
+      if (statusc == 0) {
+        status = "Unfinished";
+      } else if (statusc == 1) {
+        status = "Finished";
+      }
+      print('status is $status');
+    }
+    setState(() {
+      title = info[0][1];
+      description = info[0][2];
+    });
     } catch (e) {
       print("Fail");
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamedAndRemoveUntil(context, "/classroom/", (_) => false);
       });
-    }
+    } 
   }
 
   @override
@@ -79,33 +88,30 @@ class _AssignmentState extends State<Assignment> {
             ),
             Text("Assignment Name: $title"),
             Text("Assignment Description: $description"),
-             
             Conditional.single(
               context: context,
               conditionBuilder: (BuildContext context) =>
                   box.read('accountType') == "student",
               widgetBuilder: (BuildContext context) => Column(children: [
                 Text('Student account'),
-                /*
+                Text('Status: $status'),
                 TextButton(
                   onPressed: () {
                     DioClient z = DioClient();
-                    z.deregister(userID);
-                    Navigator.pushReplacementNamed(context, "/");
+                    z.submit();
+                    Navigator.pushReplacementNamed(context, "/assignment/");
                   },
-                  child: const Text('Deregister'),
-                ), */
-              ]), 
-              
+                  child: const Text('Submit'),
+                ),
+              ]),
               fallbackBuilder: (BuildContext context) => Row(children: [
-               
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/assignment_edit/");
+                    Navigator.pushReplacementNamed(
+                        context, "/assignment_edit/");
                   },
                   child: const Text('Edit Assignment'),
                 ),
-                
                 TextButton(
                   onPressed: () {
                     DioClient z = DioClient();
@@ -124,14 +130,13 @@ class _AssignmentState extends State<Assignment> {
                 ) , */
               ]),
             )
-          ])
-          ,
+          ]),
           TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/classroom/");
-                  },
-                  child: const Text('Back to classroom'),
-        ),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, "/classroom/");
+            },
+            child: const Text('Back to classroom'),
+          ),
         ]));
   }
 }
@@ -158,6 +163,29 @@ class DioClient {
     var id = await box.read("assignment");
     try {
       Response response = await _dio.delete('${_baseUrl}assignments/$id');
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic submit() async {
+    var assignmentID = await box.read("assignment");
+    var userID = await box.read("userID");
+    try {
+      Response response = await _dio.post('${_baseUrl}submit/', data:{"student_id":userID, "assignment_id":assignmentID});
+    } catch (e) {
+      print('Error getting classes: $e');
+    }
+  }
+
+  dynamic getStatus() async {
+    var assignmentID = await box.read("assignment");
+    var userID = await box.read("userID");
+    try {
+      Response response = await _dio.post('${_baseUrl}status/',
+          data: {"student_id": userID, "assignment_id": assignmentID});
+      print(response.data);
+      return response.data as List<dynamic>;
     } catch (e) {
       print('Error getting classes: $e');
     }
