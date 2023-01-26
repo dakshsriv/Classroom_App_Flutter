@@ -120,8 +120,6 @@ class _LoginPageState extends State<LoginPage> {
                   ])
                 ],
               )),
-          Text("Username is: $username   "),
-          Text("Password is: $password   "),
         ]));
   }
 }

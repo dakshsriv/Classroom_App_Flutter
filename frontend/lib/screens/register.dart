@@ -135,8 +135,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ],
               )),
-          Text("Username is: $username   "),
-          Text("Password is: $password   "),
           Text("Account type is: $_type"),
         ]));
   }
