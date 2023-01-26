@@ -8,6 +8,7 @@ import 'package:frontend/screens/edit_classroom.dart';
 import 'package:frontend/screens/create_assignment.dart';
 import 'package:frontend/screens/assignment.dart';
 import 'package:frontend/screens/edit_assignment.dart';
+import 'package:frontend/screens/report.dart';
 
 
 void main() async {
@@ -36,6 +37,7 @@ class Main extends StatelessWidget {
         '/assignment_create/': (context) => const CreateAssignmentPage(),
         '/assignment/': (context) => const Assignment(),
         '/assignment_edit/': (context) => const EditAssignmentPage(),
+        '/report/': (context) => const Report(),
       },
     );
   }

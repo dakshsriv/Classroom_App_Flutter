@@ -146,6 +146,13 @@ class _ClassroomState extends State<Classroom> {
                   },
                   child: const Text('Create Assignment'),
                 ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, "/report/");
+                  },
+                  child: const Text('View Report'),
+                ),
               ]),
             ),
           ])
