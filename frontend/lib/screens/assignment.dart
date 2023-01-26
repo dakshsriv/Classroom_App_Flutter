@@ -101,7 +101,7 @@ class _AssignmentState extends State<Assignment> {
                     z.submit();
                     Navigator.pushReplacementNamed(context, "/assignment/");
                   },
-                  child: const Text('Submit'),
+                  child: const Text('Submit/Unsubmit'),
                 ),
               ]),
               fallbackBuilder: (BuildContext context) => Row(children: [
